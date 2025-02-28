@@ -1,3 +1,4 @@
+using Reflex.Attributes;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -6,13 +7,23 @@ public class Player : MonoBehaviour
 
     private PlayerMovement _movement;
     private PLayerAnimator _animator;
+    private JoystickVirtual _joystickVirtual;
 
-    public void Init(JoystickVirtual joystickVirtual)
+    [Inject]
+    private void Construct(UIHandler uIHandler)
     {
-        _movement = new PlayerMovement(this.transform, joystickVirtual);
+        _joystickVirtual = uIHandler.JoystickVirtual;
+    }
+
+    public void Start()
+    {
+        _movement = new PlayerMovement(this.transform, _joystickVirtual);
 
         var animator = GetComponentInChildren<Animator>();
         _animator = new PLayerAnimator(_movement, animator);
+
+        _chainsaw.Init(_joystickVirtual);
+        _chainsaw.Activate();
     }
 
     private void Update()

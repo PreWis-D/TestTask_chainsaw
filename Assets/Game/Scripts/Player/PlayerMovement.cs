@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerMovement
 {
     private readonly Transform _playerTransform;
-    private readonly JoystickVirtual Joystick;
+    private readonly JoystickVirtual _joystick;
 
     private Vector3 _currentMovement;
     private float _edgeStartMove = 0.2f;
@@ -15,7 +15,7 @@ public class PlayerMovement
     public PlayerMovement(Transform transform, JoystickVirtual joystickVirtual)
     {
         _playerTransform = transform ?? throw new ArgumentNullException(nameof(transform));
-        Joystick = joystickVirtual ?? throw new ArgumentNullException(nameof(joystickVirtual));
+        _joystick = joystickVirtual ?? throw new ArgumentNullException(nameof(joystickVirtual));
     }
 
     public void FixedUpdate()
@@ -51,16 +51,16 @@ public class PlayerMovement
     private void CheckMove()
     {
         IsMovePressed =
-            Joystick.Direction.x > _edgeStartMove
-            || Joystick.Direction.x < -_edgeStartMove
-            || Joystick.Direction.y > _edgeStartMove
-            || Joystick.Direction.y < -_edgeStartMove;
+            _joystick.Direction.x > _edgeStartMove
+            || _joystick.Direction.x < -_edgeStartMove
+            || _joystick.Direction.y > _edgeStartMove
+            || _joystick.Direction.y < -_edgeStartMove;
     }
 
     private void SetCurrentMovement()
     {
-        _currentMovement.x = Joystick.Direction.x;
-        _currentMovement.y = Joystick.Direction.y;
+        _currentMovement.x = _joystick.Direction.x;
+        _currentMovement.y = _joystick.Direction.y;
         _currentMovement.Normalize();
     }
 }
