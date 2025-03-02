@@ -5,17 +5,25 @@ public class PlayerMovement
 {
     private readonly Transform _playerTransform;
     private readonly JoystickVirtual _joystick;
+    private readonly ParticleSystem _trail;
+    private readonly float _edgeStartMove = 0.2f;
+    private readonly float _resistancePercentage;
+    private readonly float _startSpeed;
+    private readonly Vector3 _trailOffset = new Vector3(0, -0.515f, 0);
 
     private Vector3 _currentMovement;
-    private float _edgeStartMove = 0.2f;
-    private float _speed = 5f;
+    private float _currentSpeed;
 
     public bool IsMovePressed { get; private set; }
 
-    public PlayerMovement(Transform transform, JoystickVirtual joystickVirtual)
+    public PlayerMovement(Transform transform, JoystickVirtual joystickVirtual, ParticleSystem trail, PlayerConfig playerConfig)
     {
         _playerTransform = transform ?? throw new ArgumentNullException(nameof(transform));
         _joystick = joystickVirtual ?? throw new ArgumentNullException(nameof(joystickVirtual));
+        _trail = trail ?? throw new ArgumentNullException(nameof(trail));
+
+        _startSpeed = playerConfig.Speed;
+        _resistancePercentage = playerConfig.ResistancePercentage;
     }
 
     public void FixedUpdate()
@@ -23,6 +31,11 @@ public class PlayerMovement
         CheckMove();
         SetCurrentMovement();
         Move();
+    }
+
+    public void TurnResistance(bool isResistance)
+    {
+        _currentSpeed = isResistance ? _startSpeed * (1 - _resistancePercentage * 0.01f) : _startSpeed;
     }
 
     private void Move()
@@ -35,6 +48,7 @@ public class PlayerMovement
         Vector3 newPosition = _playerTransform.position + direction;
 
         _playerTransform.position = newPosition;
+        _trail.transform.position = newPosition + _trailOffset;
     }
 
     private void Rotate(Vector3 direction)
@@ -45,7 +59,7 @@ public class PlayerMovement
 
     private Vector3 GetDirection()
     {
-        return new Vector3(_currentMovement.x, _currentMovement.y, 0) * _speed * Time.deltaTime;
+        return new Vector3(_currentMovement.x, _currentMovement.y, 0) * _currentSpeed * Time.deltaTime;
     }
 
     private void CheckMove()

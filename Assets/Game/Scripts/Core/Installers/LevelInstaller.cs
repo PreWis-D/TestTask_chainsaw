@@ -4,6 +4,8 @@ using UnityEngine;
 public class LevelInstaller : MonoBehaviour, IInstaller
 {
     [SerializeField] private EnemiesConfig _enemiesConfig;
+    [SerializeField] private LevelEnvironmentsConfig _levelEnvironmentsConfig;
+    [SerializeField] private PlayerConfig _playerConfig;
     [SerializeField] private UIHandler _uiHandlerPrefab;
 
     private ContainerBuilder _containerBuilder;
@@ -14,6 +16,8 @@ public class LevelInstaller : MonoBehaviour, IInstaller
 
         BindPlayerInput();
         BindEnemiesConfig();
+        BindLevelEnvironmentsConfig();
+        BindPlayerConfig();
         BindUIHandler();
     }
 
@@ -27,6 +31,16 @@ public class LevelInstaller : MonoBehaviour, IInstaller
         _containerBuilder.AddSingleton(_enemiesConfig);
     }
     
+    private void BindLevelEnvironmentsConfig()
+    {
+        _containerBuilder.AddSingleton(_levelEnvironmentsConfig);
+    }
+
+    private void BindPlayerConfig()
+    {
+        _containerBuilder.AddSingleton(_playerConfig);
+    }
+
     private void BindUIHandler()
     {
         var uiHadler = Instantiate(

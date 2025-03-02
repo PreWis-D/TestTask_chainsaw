@@ -20,6 +20,7 @@ namespace SpawnerExample
         private bool _isWork;
 
         public event UnityAction<Enemy> Spawned;
+        public event UnityAction<Enemy> EnemyDied;
 
         public Spawner(List<SpawnPoint> spawnPoints, EnemiesConfig enemiesConfig, EnemyType[] enemyTypes, int maxCount, float cooldown, Transform self)
         {
@@ -85,6 +86,7 @@ namespace SpawnerExample
             var enemy = damagable as Enemy;
             enemy.Died -= OnEnemyDied;
             _enemies.Remove(enemy);
+            EnemyDied?.Invoke(enemy);
         }
 
         public void OnDestroy()

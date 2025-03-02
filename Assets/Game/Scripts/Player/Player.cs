@@ -1,4 +1,5 @@
 using Reflex.Attributes;
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -7,27 +8,27 @@ public class Player : MonoBehaviour
 
     private PlayerMovement _movement;
     private PLayerAnimator _animator;
-    private JoystickVirtual _joystickVirtual;
 
-    [Inject]
-    private void Construct(UIHandler uIHandler)
+    public void Init(UIHandler uIHandler, PlayerConfig playerConfig)
     {
-        _joystickVirtual = uIHandler.JoystickVirtual;
-    }
-
-    public void Start()
-    {
-        _movement = new PlayerMovement(this.transform, _joystickVirtual);
+        var trail = PoolManager.GetPool(playerConfig.TrailPrefab, transform.position);
+        _movement = new PlayerMovement(this.transform, uIHandler.JoystickVirtual, trail, playerConfig);
 
         var animator = GetComponentInChildren<Animator>();
         _animator = new PLayerAnimator(_movement, animator);
 
-        _chainsaw.Init(_joystickVirtual);
+        _chainsaw.Init(uIHandler.JoystickVirtual);
         _chainsaw.Activate();
+    }
+
+    public void SetReward(RewardLoot rewardLoot)
+    {
+        Debug.Log($"get {rewardLoot.Type} count: {rewardLoot.Reward}");
     }
 
     private void Update()
     {
+        _movement.TurnResistance(_chainsaw.Damagables.Count > 0);    
         _animator.Update();
     }
 

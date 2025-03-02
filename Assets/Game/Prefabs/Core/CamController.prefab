@@ -297,6 +297,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2724808978341452507}
+  - component: {fileID: 616527301664522189}
   m_Layer: 0
   m_Name: CamController
   m_TagString: Untagged
@@ -321,3 +322,19 @@ Transform:
   - {fileID: 5892353658690176209}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &616527301664522189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7268153789656302759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8c83aeae83d7a4789f742ee882a40f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerCamera: {fileID: 0}
+  _timeToNormal: 0.25
+  _shakeValue: 1
+  _cooldown: 1

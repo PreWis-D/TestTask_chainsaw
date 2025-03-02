@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a07a9427a6692b42a44a24cb2b939b1, type: 3}
+  m_Name: EnemiesConfig
+  m_EditorClassIdentifier: 
+  <EnemyPrefabDatas>k__BackingField:
+  - <Type>k__BackingField: 1
+    <MoneyType>k__BackingField: 1
+    <Prefab>k__BackingField: {fileID: 537974921853650469, guid: 7e1a022472c695649b1371333d56539b, type: 3}
+    <BloodVFX>k__BackingField: {fileID: 8322428435670647046, guid: 617378de28fbaa64c96485d5b0d9169b, type: 3}
+    <ExplodeVFX>k__BackingField: {fileID: 5428373026534036621, guid: c6d4750b9cc22374181d49efe232378c, type: 3}
+    <RewardLoot>k__BackingField: {fileID: 7774587720570914083, guid: 94baed25ac0d25e4babcceeeabced653, type: 3}
+    <StartHealth>k__BackingField: 5
+    <Reward>k__BackingField: 3
+    <IdleTime>k__BackingField: 3
+    <PanicTime>k__BackingField: 3
+    <IdleMoveSpeed>k__BackingField: 2
+    <PanicMoveSpeed>k__BackingField: 3
+    <AlertRadius>k__BackingField: 2
+  - <Type>k__BackingField: 2
+    <MoneyType>k__BackingField: 2
+    <Prefab>k__BackingField: {fileID: 985431107800310780, guid: d8b5d1a5da791064ab26200a9141e6f4, type: 3}
+    <BloodVFX>k__BackingField: {fileID: 900220821385385957, guid: c972ffdbdcf99704483596b1cde8d17d, type: 3}
+    <ExplodeVFX>k__BackingField: {fileID: 5428373026534036621, guid: 311d30b9e7b858041babaa2048d76cfc, type: 3}
+    <RewardLoot>k__BackingField: {fileID: 3602359578286779220, guid: b145d9f39542a474aa61255278a9ef47, type: 3}
+    <StartHealth>k__BackingField: 10
+    <Reward>k__BackingField: 6
+    <IdleTime>k__BackingField: 3
+    <PanicTime>k__BackingField: 3
+    <IdleMoveSpeed>k__BackingField: 2
+    <PanicMoveSpeed>k__BackingField: 3
+    <AlertRadius>k__BackingField: 2

@@ -23,9 +23,9 @@ namespace SpawnerExample
         private const int _minValue = 1;
 
         private EnemiesConfig _enemyConfig;
-        private Spawner _spawner;
         private float _offset = 0.5f;
 
+        public Spawner Spawner { get; private set; }
         public List<SpawnPoint> SpawnPoints { get; private set; } = new List<SpawnPoint>();
 
         private void OnValidate()
@@ -34,14 +34,10 @@ namespace SpawnerExample
                 _step = _minValue;
         }
 
-        [Inject]
-        private void Construct(EnemiesConfig enemiesConfig)
+        public void Init(EnemiesConfig enemiesConfig)
         {
             _enemyConfig = enemiesConfig;
-        }
 
-        private void Start()
-        {
             Vector2 offset = new Vector2((_spawnZoneSize.x - _step) * _offset, (_spawnZoneSize.y - _step) * _offset);
 
             for (int y = 0; y < _spawnZoneSize.y; y += _step)
@@ -55,13 +51,13 @@ namespace SpawnerExample
                 }
             }
 
-            _spawner = new Spawner(SpawnPoints, _enemyConfig, _enemyTypes, _maxCount, _cooldown, _spawnerTransform);
-            _spawner.StartSpawn();
+            Spawner = new Spawner(SpawnPoints, _enemyConfig, _enemyTypes, _maxCount, _cooldown, _spawnerTransform);
+            Spawner.StartSpawn();
         }
 
         private void OnDestroy()
         {
-            _spawner.OnDestroy();
+            Spawner.OnDestroy();
         }
 
 #if UNITY_EDITOR

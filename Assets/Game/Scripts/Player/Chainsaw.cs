@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -6,22 +7,28 @@ using UnityEngine;
 public class Chainsaw : MonoBehaviour
 {
     [SerializeField] public Transform _model;
+    [SerializeField] public ParticleSystem[] _sparks;
 
     private JoystickVirtual _joystick;
+    private Animator _animator;
+    private readonly int _hashIsWork = Animator.StringToHash("Work");
     private float _damage = 1;
-    private float _colldown = 0.5f;
+    private float _colldown = 0.25f;
     private bool _isWork;
-    private List<IDamagable> _damagables = new List<IDamagable>();
     private CancellationTokenSource _cancellationTokenSource;
+
+    public List<IDamagable> Damagables { get; private set; } = new List<IDamagable>();
 
     public void Init(JoystickVirtual joystickVirtual)
     {
         _joystick = joystickVirtual;
+        _animator = GetComponent<Animator>();
     }
 
     public void Activate()
     {
         _isWork = true;
+        _animator.SetBool(_hashIsWork, _isWork);
         _cancellationTokenSource = new CancellationTokenSource();
         Work(_cancellationTokenSource.Token).Forget();
     }
@@ -29,6 +36,7 @@ public class Chainsaw : MonoBehaviour
     public void Deactivate()
     {
         _isWork = false;
+        _animator.SetBool(_hashIsWork, _isWork);
         _cancellationTokenSource.Cancel();
     }
 
@@ -64,8 +72,11 @@ public class Chainsaw : MonoBehaviour
     {
         List<IDamagable> damagables = new List<IDamagable>();
 
-        foreach (var item in _damagables)
+        foreach (var item in Damagables)
             damagables.Add(item);
+
+        for (int i = 0; i < _sparks.Length; i++)
+            _sparks[i].gameObject.SetActive(damagables.Count > 0);
 
         if (damagables.Count > 0)
         {
@@ -84,7 +95,7 @@ public class Chainsaw : MonoBehaviour
     {
         if (CheckList(damagable) == false)
         {
-            _damagables.Add(damagable);
+            Damagables.Add(damagable);
             damagable.Died += Remove;
         }
     }
@@ -100,13 +111,13 @@ public class Chainsaw : MonoBehaviour
         if (CheckList(damagable))
         {
             damagable.Died -= Remove;
-            _damagables.Remove(damagable);
+            Damagables.Remove(damagable);
         }
     }
 
     private bool CheckList(IDamagable damagable)
     {
-        foreach (var item in _damagables)
+        foreach (var item in Damagables)
             if (item == damagable)
                 return true;
 

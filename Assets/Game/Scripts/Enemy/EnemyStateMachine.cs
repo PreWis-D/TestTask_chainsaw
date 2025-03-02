@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.Enemy;
 using SpawnerExample;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,30 +7,35 @@ public class EnemyStateMachine
 {
     private readonly Enemy _enemy;
     private readonly EnemyMover _mover;
+    private readonly EnemyAnimator _animator;
     private readonly float _idleTime;
     private readonly float _panicTime;
     private readonly float _idleMoveSpeed;
     private readonly float _panicMoveSpeed;
+    private readonly float _alertRaius;
     private readonly List<SpawnPoint> _spawnPoints = new List<SpawnPoint>();
 
     private SpawnPoint _currentPoint;
     private EnemyState _state = EnemyState.Idle;
     private float _timer = 0;
 
-    public EnemyStateMachine(Enemy enemy, EnemyMover enemyMover, EnemyPrefabData data, List<SpawnPoint> spawnPoints, int currentPointIndex)
+    public EnemyStateMachine(Enemy enemy, EnemyMover enemyMover, EnemyAnimator animator,
+        EnemyPrefabData data, List<SpawnPoint> spawnPoints, int currentPointIndex)
     {
         _enemy = enemy;
         _mover = enemyMover;
+        _animator = animator;
         _idleTime = data.IdleTime;
         _panicTime = data.PanicTime;
         _idleMoveSpeed = data.IdleMoveSpeed;
         _panicMoveSpeed = data.PanicMoveSpeed;
+        _alertRaius = data.AlertRadius;
 
         _spawnPoints = spawnPoints;
         _currentPoint = _spawnPoints[currentPointIndex];
         _currentPoint.TakePosition();
 
-        _enemy.DamageTaked += EnterPanic;
+        _enemy.DamageTaked += OnDamageTaked;
         _enemy.Died += EnterDie;
     }
 
@@ -46,9 +52,6 @@ public class EnemyStateMachine
             case EnemyState.Panic:
                 Panic();
                 break;
-            case EnemyState.Die:
-                Die();
-                break;
         }
     }
 
@@ -56,6 +59,7 @@ public class EnemyStateMachine
     {
         _timer = 0;
         _state = EnemyState.Idle;
+        _animator.Idle();
     }
 
     private void Idle()
@@ -80,13 +84,14 @@ public class EnemyStateMachine
         _currentPoint.DropPosition();
         _currentPoint = spawnPoints[randomIndex];
         _currentPoint.TakePosition();
+        _mover.SetTarget(_currentPoint.transform);
     }
 
     private void EnterMove()
     {
         _state = EnemyState.Move;
         _mover.SetSpeed(_idleMoveSpeed);
-        _mover.SetTarget(_currentPoint.transform);
+        _animator.Move();
     }
 
     private void Move()
@@ -97,11 +102,25 @@ public class EnemyStateMachine
             EnterIdle();
     }
 
-    private void EnterPanic(float damage)
+    private void OnDamageTaked(float damage)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(_enemy.transform.position, _alertRaius);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            var otherEnemy = colliders[i].transform.GetComponent<Enemy>();
+            if (otherEnemy)
+                otherEnemy.Panic();
+        }
+
+        EnterPanic();
+    }
+
+    public void EnterPanic()
     {
         _timer = 0;
-        _state = EnemyState.Panic;
         _mover.SetSpeed(_panicMoveSpeed);
+        _state = EnemyState.Panic;
+        _animator.Panic();
     }
 
     private void Panic()
@@ -123,17 +142,7 @@ public class EnemyStateMachine
 
     private void EnterDie(IDamagable damagable)
     {
-        _state = EnemyState.Die;
-    }
-
-    private void Die()
-    {
-        PoolManager.SetPool(_enemy);
-    }
-
-    public void OnDestroy()
-    {
-        _enemy.DamageTaked -= EnterPanic;
+        _enemy.DamageTaked -= OnDamageTaked;
         _enemy.Died -= EnterDie;
     }
 }
